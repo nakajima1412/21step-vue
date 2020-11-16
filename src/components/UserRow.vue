@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, nextTick, ref } from 'vue'
 
 export function User(nickname, email) {
   this.nickname = nickname
@@ -29,17 +29,22 @@ export default defineComponent({
       required: true,
     },
   },
-  data: function() {
-    return { editable: false }
-  },
-  methods: {
-    edit: function() {
-      this.editable = true
-      this.$nextTick(() => {
+  setup() {
+    const editable = ref(false)
+    const editNickname = ref(null)
+
+    const edit = () => {
+      editable.value = true
+      nextTick(() => {
         // DOM更新後に実行
-        this.$refs.editNickname.focus()
+        editNickname.value.focus()
       })
-    },
+    }
+    return {
+      editable,
+      editNickname,
+      edit,
+    }
   },
 })
 </script>
