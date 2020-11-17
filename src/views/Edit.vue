@@ -44,21 +44,29 @@
   </div>
 </template>
 
-<script>
-import { computed, defineComponent, reactive, toRefs } from 'vue'
-import UserRowComponent, { User } from '@/components/UserRow'
+<script lang="ts">
+import { computed, ComputedRef, defineComponent, reactive, toRefs } from 'vue'
+import UserRowComponent, { User } from '@/components/UserRow.vue'
+
+interface State {
+  users: User[]
+  nickname: string
+  email: string
+  nicknameFilter: string
+  filteredUsers: ComputedRef<User[]>
+}
 
 export default defineComponent({
   components: {
     UserRowComponent,
   },
   setup() {
-    const state = reactive({
+    const state = reactive<State>({
       users: [],
       nickname: '',
       email: '',
       nicknameFilter: '',
-      filteredUsers: computed(() => {
+      filteredUsers: computed((): User[] => {
         return state.users.filter(user =>
           user.nickname.includes(state.nicknameFilter),
         )
@@ -67,7 +75,10 @@ export default defineComponent({
 
     const saveUser = () => {
       // 登録したユーザーをメモリに保持
-      const user = new User(state.nickname, state.email)
+      const user: User = {
+        nickname: state.nickname,
+        email: state.email,
+      }
       state.users.push(user)
 
       // ブラウザ標準のダイアログで登録内容を表示

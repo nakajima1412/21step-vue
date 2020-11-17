@@ -14,28 +14,31 @@
   </tr>
 </template>
 
-<script>
-import { defineComponent, nextTick, ref } from 'vue'
+<script lang="ts">
+import { defineComponent, nextTick, ref, PropType } from 'vue'
 
-export function User(nickname, email) {
-  this.nickname = nickname
-  this.email = email
+export interface User {
+  nickname: string
+  email: string
 }
 
 export default defineComponent({
   props: {
     user: {
-      type: User,
+      type: Object as PropType<User>,
       required: true,
     },
   },
   setup() {
     const editable = ref(false)
-    const editNickname = ref(null)
+    const editNickname = ref<HTMLFormElement | null>(null)
 
     const edit = () => {
       editable.value = true
       nextTick(() => {
+        if (!editNickname.value) {
+          return
+        }
         // DOM更新後に実行
         editNickname.value.focus()
       })
